@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		6396B8F02E2A6BAD00AE5BFB /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6396B8EF2E2A6BAD00AE5BFB /* Alamofire */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		6396B8832E2A395D00AE5BFB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6396B8F02E2A6BAD00AE5BFB /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +117,7 @@
 			);
 			name = ExploreGame;
 			packageProductDependencies = (
+				6396B8EF2E2A6BAD00AE5BFB /* Alamofire */,
 			);
 			productName = ExploreGame;
 			productReference = 6396B8752E2A395B00AE5BFB /* ExploreGame.app */;
@@ -195,6 +201,10 @@
 			);
 			mainGroup = 6396B86C2E2A395B00AE5BFB;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				6396B8EE2E2A6BAD00AE5BFB /* XCRemoteSwiftPackageReference "Alamofire" */,
+				6396B8F12E2A73D300AE5BFB /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6396B8762E2A395B00AE5BFB /* Products */;
 			projectDirPath = "";
@@ -558,6 +568,33 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6396B8EE2E2A6BAD00AE5BFB /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+		6396B8F12E2A73D300AE5BFB /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.59.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6396B8EF2E2A6BAD00AE5BFB /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6396B8EE2E2A6BAD00AE5BFB /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 6396B86D2E2A395B00AE5BFB /* Project object */;
 }

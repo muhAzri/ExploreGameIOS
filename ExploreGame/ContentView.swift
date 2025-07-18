@@ -8,15 +8,44 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var coordinator = AppCoordinator()
+    @State private var selectedGame: Game?
+    @State private var showingAbout = false
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack {
+            coordinator.createGameListView()
+                .navigationDestination(item: $selectedGame) { game in
+                    GameDetailView(game: game)
+                }
+                .sheet(isPresented: $showingAbout) {
+                    NavigationView {
+                        coordinator.createAboutView()
+                            .navigationBarTitleDisplayMode(.inline)
+                            .toolbar {
+                                ToolbarItem(placement: .navigationBarTrailing) {
+                                    Button("Done") {
+                                        showingAbout = false
+                                    }
+                                }
+                            }
+                    }
+                }
         }
-        .padding()
+        .onReceive(NotificationCenter.default.publisher(for: .navigateToGameDetail)) { notification in
+            if let game = notification.object as? Game {
+                selectedGame = game
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .navigateToAbout)) { _ in
+            showingAbout = true
+        }
     }
+}
+
+extension Notification.Name {
+    static let navigateToGameDetail = Notification.Name("navigateToGameDetail")
+    static let navigateToAbout = Notification.Name("navigateToAbout")
 }
 
 #Preview {
