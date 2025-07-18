@@ -7,7 +7,6 @@ protocol GameListRouterProtocol {
 }
 
 class GameListRouter: GameListRouterProtocol {
-    
     func navigateToGameDetail(_ game: Game) {
         NotificationCenter.default.post(name: .navigateToGameDetail, object: game)
     }

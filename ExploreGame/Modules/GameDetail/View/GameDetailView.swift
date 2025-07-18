@@ -156,15 +156,19 @@ struct GameDetailContent: View {
                 }
                 
                 if let website = gameDetail.website, !website.isEmpty {
-                    Link("Visit Website", destination: URL(string: website)!)
-                        .foregroundColor(.blue)
-                        .font(.headline)
+                    if let websiteURL = URL(string: website) {
+                        Link("Visit Website", destination: websiteURL)
+                            .foregroundColor(.blue)
+                            .font(.headline)
+                    }
                 }
                 
                 if let redditUrl = gameDetail.redditUrl, !redditUrl.isEmpty {
-                    Link("Reddit Discussion", destination: URL(string: redditUrl)!)
-                        .foregroundColor(.orange)
-                        .font(.headline)
+                    if let redditURL = URL(string: redditUrl) {
+                        Link("Reddit Discussion", destination: redditURL)
+                            .foregroundColor(.orange)
+                            .font(.headline)
+                    }
                 }
             }
             .padding()

@@ -13,6 +13,6 @@ class GameDetailInteractor: GameDetailInteractorProtocol {
     }
     
     func fetchGameDetail(id: Int) -> AnyPublisher<GameDetail, NetworkError> {
-        return networkManager.request(.gameDetail(id: id))
+        networkManager.request(.gameDetail(id: id))
     }
 }

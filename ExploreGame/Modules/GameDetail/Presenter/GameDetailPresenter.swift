@@ -25,7 +25,6 @@ class GameDetailPresenter: GameDetailPresenterProtocol {
     }
     
     deinit {
-        
     }
     
     func loadGameDetail(id: Int) {

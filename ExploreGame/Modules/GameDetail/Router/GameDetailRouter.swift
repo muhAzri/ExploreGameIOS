@@ -2,11 +2,9 @@ import Foundation
 import SwiftUI
 
 protocol GameDetailRouterProtocol {
-    
 }
 
 class GameDetailRouter: GameDetailRouterProtocol {
-    
     static func createModule(game: Game) -> some View {
         let interactor = GameDetailInteractor()
         let router = GameDetailRouter()

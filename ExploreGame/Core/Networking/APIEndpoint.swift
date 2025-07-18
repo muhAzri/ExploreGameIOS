@@ -5,7 +5,7 @@ enum APIEndpoint {
     case gameDetail(id: Int)
     
     var baseURL: String {
-        return APIConstants.baseURL
+        APIConstants.baseURL
     }
     
     var path: String {

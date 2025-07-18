@@ -9,11 +9,9 @@ class SimpleGameDetailPresenter: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     init() {
-        
     }
     
     deinit {
-        
     }
     
     func loadGameDetail(id: Int) {

@@ -14,10 +14,10 @@ class GameListInteractor: GameListInteractorProtocol {
     }
     
     func fetchGames(page: Int) -> AnyPublisher<GameResponse, NetworkError> {
-        return networkManager.request(.games(search: nil, page: page))
+        networkManager.request(.games(search: nil, page: page))
     }
     
     func searchGames(query: String, page: Int) -> AnyPublisher<GameResponse, NetworkError> {
-        return networkManager.request(.games(search: query, page: page))
+        networkManager.request(.games(search: query, page: page))
     }
 }

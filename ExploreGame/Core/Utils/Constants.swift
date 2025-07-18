@@ -7,7 +7,7 @@ struct APIConstants {
     struct Endpoints {
         static let games = "/games"
         static func gameDetail(id: Int) -> String {
-            return "/games/\(id)"
+            "/games/\(id)"
         }
     }
 }

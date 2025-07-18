@@ -21,7 +21,7 @@ struct Configuration {
     }
     
     var baseURL: String {
-        return "https://api.rawg.io/api"
+        "https://api.rawg.io/api"
     }
 }
 
