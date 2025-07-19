@@ -5,23 +5,34 @@ struct Configuration {
     
     private init() {}
     
+    private var configurationPlist: [String: Any]? {
+        guard let path = Bundle.main.path(forResource: "Configuration", ofType: "plist"),
+              let plist = NSDictionary(contentsOfFile: path) as? [String: Any] else {
+            return nil
+        }
+        return plist
+    }
+    
     var apiKey: String {
-        // In production, this should come from:
-        // 1. Environment variables
-        // 2. Secure keychain storage
-        // 3. Server-side configuration
-        // 4. Info.plist (for development only)
+        if let plist = configurationPlist,
+           let apiKey = plist["RAWG_API_KEY"] as? String {
+            return apiKey
+        }
         
         if let apiKey = Bundle.main.object(forInfoDictionaryKey: "RAWG_API_KEY") as? String {
             return apiKey
         }
         
-        // Fallback for development (should be removed in production)
-        return "bb59da7d47634570b63f0261386b145a"
+        fatalError("API Key not found in Configuration.plist or Info.plist")
     }
     
     var baseURL: String {
-        "https://api.rawg.io/api"
+        if let plist = configurationPlist,
+           let baseURL = plist["BASE_URL"] as? String {
+            return baseURL
+        }
+        
+        return "https://api.rawg.io/api"
     }
 }
 
