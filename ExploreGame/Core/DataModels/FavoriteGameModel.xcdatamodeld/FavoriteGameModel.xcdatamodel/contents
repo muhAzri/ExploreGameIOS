@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22158" systemVersion="22G630" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="FavoriteGame" representedClassName="FavoriteGame" syncable="YES" codeGenerationType="class">
+        <attribute name="backgroundImage" optional="YES" attributeType="String"/>
+        <attribute name="dateAdded" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="gameID" attributeType="Integer 32" usesScalarValueType="YES"/>
+        <attribute name="genres" optional="YES" attributeType="String"/>
+        <attribute name="metacritic" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="platforms" optional="YES" attributeType="String"/>
+        <attribute name="rating" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="released" optional="YES" attributeType="String"/>
+    </entity>
+</model>

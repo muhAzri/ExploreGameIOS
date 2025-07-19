@@ -10,4 +10,8 @@ class AppCoordinator: ObservableObject {
     func createAboutView() -> some View {
         AboutRouter.createModule()
     }
+    
+    func createFavoritesView() -> some View {
+        FavoritesView()
+    }
 }

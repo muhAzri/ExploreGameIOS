@@ -32,7 +32,7 @@ struct Configuration {
             return baseURL
         }
         
-        return "https://api.rawg.io/api"
+        fatalError("Base Url not found in Configuration.plist or Info.plist")
     }
 }
 

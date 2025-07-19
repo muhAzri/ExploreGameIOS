@@ -2,6 +2,9 @@ import SwiftUI
 
 struct AboutView<Presenter: AboutPresenterProtocol>: View {
     @ObservedObject var presenter: Presenter
+    @State private var editName = ""
+    @State private var editEmail = ""
+    @State private var editBio = ""
     
     var body: some View {
         ScrollView {
@@ -21,31 +24,46 @@ struct AboutView<Presenter: AboutPresenterProtocol>: View {
                         .bold()
                         .multilineTextAlignment(.center)
                     
+                    Text(presenter.email)
+                        .font(.subheadline)
+                        .foregroundColor(.blue)
+                        .multilineTextAlignment(.center)
+                    
                     Text(presenter.bio)
                         .font(.body)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
                         .foregroundColor(.secondary)
+                    
+                    Button("Edit Profile") {
+                        editName = presenter.fullName
+                        editEmail = presenter.email
+                        editBio = presenter.bio
+                        presenter.startEditingProfile()
+                    }
+                    .buttonStyle(.borderedProminent)
                 }
-                
-                VStack(alignment: .leading, spacing: 12) {
-                    InfoRow(title: "iOS Technologies", value: "Swift, SwiftUI, UIKit, Combine, Core Data")
-                    InfoRow(title: "Android Technologies", value: "Kotlin, Java, Jetpack Compose, Room")
-                    InfoRow(title: "Cross-Platform", value: "Flutter, Dart, Provider, Bloc")
-                    InfoRow(title: "Architecture", value: "VIPER, MVVM, Clean Architecture, MVI")
-                    InfoRow(title: "Tools", value: "Xcode, Android Studio, Git, Firebase")
-                    InfoRow(title: "Specialties", value: "Native & Cross-Platform Mobile Apps")
-                }
-                .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(12)
-                .padding(.horizontal)
                 
                 Spacer(minLength: 40)
             }
         }
         .navigationTitle("About")
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: .constant(presenter.isEditingProfile), onDismiss: {
+            presenter.cancelEditing()
+        }) {
+            EditProfileView(
+                name: $editName,
+                email: $editEmail,
+                bio: $editBio,
+                onSave: {
+                    presenter.saveProfile(name: editName, email: editEmail, bio: editBio)
+                },
+                onCancel: {
+                    presenter.cancelEditing()
+                }
+            )
+        }
     }
 }
 
@@ -64,5 +82,43 @@ struct InfoRow: View {
                 .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+struct EditProfileView: View {
+    @Binding var name: String
+    @Binding var email: String
+    @Binding var bio: String
+    let onSave: () -> Void
+    let onCancel: () -> Void
+    
+    var body: some View {
+        NavigationView {
+            Form {
+                Section(header: Text("Profile Information")) {
+                    TextField("Full Name", text: $name)
+                    TextField("Email", text: $email)
+                        .keyboardType(.emailAddress)
+                    TextField("Title/Bio", text: $bio, axis: .vertical)
+                        .lineLimit(2...4)
+                }
+            }
+            .navigationTitle("Edit Profile")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        onCancel()
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Save") {
+                        onSave()
+                    }
+                    .disabled(name.isEmpty || email.isEmpty)
+                }
+            }
+        }
     }
 }

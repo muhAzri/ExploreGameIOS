@@ -2,27 +2,72 @@ import SwiftUI
 
 struct GameDetailView: View {
     @StateObject private var presenter = SimpleGameDetailPresenter()
+    @StateObject private var coreDataManager = CoreDataManager.shared
+    @Environment(\.dismiss) private var dismiss
     let game: Game
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+        VStack(spacing: 0) {
+            // Custom Navigation Bar
+            HStack {
+                Button(action: {
+                    dismiss()
+                }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                        Text("Back")
+                    }
+                    .foregroundColor(.blue)
+                }
+                
+                Spacer()
+                
+                Text(game.name)
+                    .font(.headline)
+                    .lineLimit(1)
+                
+                Spacer()
+                
+                Button(action: {
+                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                    
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                        if coreDataManager.isFavorite(game.id) {
+                            coreDataManager.removeFromFavorites(game.id)
+                        } else {
+                            coreDataManager.addToFavorites(game)
+                            impactFeedback.impactOccurred()
+                        }
+                    }
+                }) {
+                    let isFavorite = coreDataManager.isFavorite(game.id)
+                    Image(systemName: isFavorite ? "heart.fill" : "heart")
+                        .foregroundColor(isFavorite ? .red : .gray)
+                        .scaleEffect(isFavorite ? 1.1 : 1.0)
+                        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isFavorite)
+                }
+            }
+            .padding()
+            .background(Color(UIColor.systemBackground))
+            
+            // Content
+            ScrollView {
                 if presenter.isLoading {
-                    ProgressView("Loading game details...")
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding()
+                    GameDetailShimmerSkeleton()
                 } else if let gameDetail = presenter.gameDetail {
                     GameDetailContent(gameDetail: gameDetail)
                 } else {
-                    Text("Failed to load game details")
-                        .foregroundColor(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding()
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Failed to load game details")
+                            .foregroundColor(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding()
+                    }
                 }
             }
         }
-        .navigationTitle(game.name)
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarHidden(true)
+        .toolbar(.hidden, for: .tabBar)
         .onAppear {
             presenter.loadGameDetail(id: game.id)
         }
