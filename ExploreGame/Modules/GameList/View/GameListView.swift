@@ -1,58 +1,58 @@
 import SwiftUI
 
-struct GameListView<Presenter: GameListPresenterProtocol>: View {
-    @ObservedObject var presenter: Presenter
+struct GameListView: View {
+    @EnvironmentObject var viewModel: GameListViewModel
     
     var body: some View {
         VStack {
-            SearchBar(text: $presenter.searchText)
+            SearchBar(text: $viewModel.searchText)
                 .padding(.horizontal)
             
-            if presenter.isLoading && presenter.games.isEmpty {
+            if viewModel.isLoading && viewModel.games.isEmpty {
                 ScrollView {
                     GameListShimmerSkeleton()
                 }
-            } else if presenter.games.isEmpty {
+            } else if viewModel.games.isEmpty {
                 Spacer()
                 Text("No games found")
                     .foregroundColor(.secondary)
                 Spacer()
             } else {
                 List {
-                    ForEach(presenter.games) { game in
+                    ForEach(viewModel.games) { game in
                         GameRowView(game: game)
                             .onTapGesture {
-                                presenter.navigateToGameDetail(game)
+                                viewModel.selectGame(game)
                             }
                             .onAppear {
-                                if game.id == presenter.games.last?.id {
-                                    presenter.loadMoreGames()
+                                if game.id == viewModel.games.last?.id {
+                                    viewModel.loadMoreGames()
                                 }
                             }
                     }
                     
-                    if presenter.isLoading && !presenter.games.isEmpty {
+                    if viewModel.isLoading && !viewModel.games.isEmpty {
                         GameRowShimmerSkeleton()
                             .padding(.horizontal)
                     }
                 }
                 .refreshable {
-                    presenter.refreshGames()
+                    viewModel.refreshGames()
                 }
             }
         }
         .navigationTitle("Games")
         .navigationBarTitleDisplayMode(.large)
-        .alert("Error", isPresented: .constant(presenter.errorMessage != nil)) {
+        .alert("Error", isPresented: .constant(viewModel.errorMessage != nil)) {
             Button("OK") {
-                presenter.clearError()
+                viewModel.clearError()
             }
         } message: {
-            Text(presenter.errorMessage ?? "")
+            Text(viewModel.errorMessage ?? "")
         }
         .onAppear {
-            if presenter.games.isEmpty {
-                presenter.loadGames()
+            if viewModel.games.isEmpty {
+                viewModel.loadGames()
             }
         }
     }

@@ -1,24 +1,27 @@
 import Foundation
 
-protocol FavoritesPresenterProtocol: ObservableObject {
+protocol FavoritesViewModelProtocol: ObservableObject {
     var favorites: [FavoriteGameEntity] { get }
     var isLoading: Bool { get }
     var errorMessage: String? { get }
+    var selectedGame: Game? { get set }
     
     func loadFavorites()
     func removeFromFavorites(_ gameID: Int)
     func clearError()
+    func selectGame(_ game: Game)
 }
 
-class FavoritesPresenter: FavoritesPresenterProtocol {
+class FavoritesViewModel: FavoritesViewModelProtocol {
     @Published var favorites: [FavoriteGameEntity] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
+    @Published var selectedGame: Game?
     
-    private let interactor: FavoritesInteractorProtocol
+    private let favoritesService: FavoritesServiceProtocol
     
-    init(interactor: FavoritesInteractorProtocol = FavoritesInteractor()) {
-        self.interactor = interactor
+    init(favoritesService: FavoritesServiceProtocol = FavoritesService()) {
+        self.favoritesService = favoritesService
     }
     
     func loadFavorites() {
@@ -26,14 +29,18 @@ class FavoritesPresenter: FavoritesPresenterProtocol {
         errorMessage = nil
         
         DispatchQueue.main.async {
-            self.favorites = self.interactor.fetchFavorites()
+            self.favorites = self.favoritesService.fetchFavorites()
             self.isLoading = false
         }
     }
     
     func removeFromFavorites(_ gameID: Int) {
-        interactor.removeFromFavorites(gameID)
+        favoritesService.removeFromFavorites(gameID)
         loadFavorites()
+    }
+    
+    func selectGame(_ game: Game) {
+        selectedGame = game
     }
     
     func clearError() {

@@ -1,36 +1,38 @@
 import Foundation
 import Combine
 
-protocol GameListPresenterProtocol: ObservableObject {
+protocol GameListViewModelProtocol: ObservableObject {
     var games: [Game] { get }
     var isLoading: Bool { get }
     var errorMessage: String? { get }
     var searchText: String { get set }
+    var selectedGame: Game? { get set }
+    var shouldNavigateToAbout: Bool { get set }
     
     func loadGames()
     func loadMoreGames()
     func refreshGames()
     func searchGames()
     func clearError()
-    func navigateToGameDetail(_ game: Game)
+    func selectGame(_ game: Game)
     func navigateToAbout()
 }
 
-class GameListPresenter: GameListPresenterProtocol {
+class GameListViewModel: GameListViewModelProtocol {
     @Published var games: [Game] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     @Published var searchText: String = ""
+    @Published var selectedGame: Game?
+    @Published var shouldNavigateToAbout: Bool = false
     
-    private let interactor: GameListInteractorProtocol
-    private let router: GameListRouterProtocol
+    private let gameService: GameListServiceProtocol
     private var cancellables = Set<AnyCancellable>()
     private var currentPage = 1
     private var canLoadMore = true
     
-    init(interactor: GameListInteractorProtocol, router: GameListRouterProtocol) {
-        self.interactor = interactor
-        self.router = router
+    init(gameService: GameListServiceProtocol = GameListService()) {
+        self.gameService = gameService
         
         setupSearchBinding()
     }
@@ -42,7 +44,7 @@ class GameListPresenter: GameListPresenterProtocol {
         errorMessage = nil
         currentPage = 1
         
-        interactor.fetchGames(page: currentPage)
+        gameService.fetchGames(page: currentPage)
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] completion in
@@ -66,8 +68,8 @@ class GameListPresenter: GameListPresenterProtocol {
         currentPage += 1
         
         let publisher = searchText.isEmpty ? 
-            interactor.fetchGames(page: currentPage) : 
-            interactor.searchGames(query: searchText, page: currentPage)
+            gameService.fetchGames(page: currentPage) : 
+            gameService.searchGames(query: searchText, page: currentPage)
         
         publisher
             .receive(on: DispatchQueue.main)
@@ -101,7 +103,7 @@ class GameListPresenter: GameListPresenterProtocol {
         errorMessage = nil
         currentPage = 1
         
-        interactor.searchGames(query: searchText, page: currentPage)
+        gameService.searchGames(query: searchText, page: currentPage)
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] completion in
@@ -128,12 +130,12 @@ class GameListPresenter: GameListPresenterProtocol {
             .store(in: &cancellables)
     }
     
-    func navigateToGameDetail(_ game: Game) {
-        router.navigateToGameDetail(game)
+    func selectGame(_ game: Game) {
+        selectedGame = game
     }
     
     func navigateToAbout() {
-        router.navigateToAbout()
+        shouldNavigateToAbout = true
     }
     
     func clearError() {

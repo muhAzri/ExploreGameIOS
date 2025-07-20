@@ -1,11 +1,11 @@
 import Foundation
 
-protocol FavoritesInteractorProtocol {
+protocol FavoritesServiceProtocol {
     func fetchFavorites() -> [FavoriteGameEntity]
     func removeFromFavorites(_ gameID: Int)
 }
 
-class FavoritesInteractor: FavoritesInteractorProtocol {
+class FavoritesService: FavoritesServiceProtocol {
     private let coreDataManager = CoreDataManager.shared
     
     func fetchFavorites() -> [FavoriteGameEntity] {

@@ -1,11 +1,11 @@
 import Foundation
 import Combine
 
-protocol GameDetailInteractorProtocol {
+protocol GameDetailServiceProtocol {
     func fetchGameDetail(id: Int) -> AnyPublisher<GameDetail, NetworkError>
 }
 
-class GameDetailInteractor: GameDetailInteractorProtocol {
+class GameDetailService: GameDetailServiceProtocol {
     private let networkManager: NetworkManagerProtocol
     
     init(networkManager: NetworkManagerProtocol = NetworkManager.shared) {

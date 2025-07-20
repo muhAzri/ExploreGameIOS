@@ -1,6 +1,6 @@
 import Foundation
 
-protocol AboutPresenterProtocol: ObservableObject {
+protocol AboutViewModelProtocol: ObservableObject {
     var fullName: String { get }
     var bio: String { get }
     var profileImageName: String { get }
@@ -12,10 +12,9 @@ protocol AboutPresenterProtocol: ObservableObject {
     func cancelEditing()
 }
 
-class AboutPresenter: AboutPresenterProtocol {
+class AboutViewModel: AboutViewModelProtocol {
     @Published var isEditingProfile = false
     
-    private let router: AboutRouterProtocol
     private let userDefaultsManager = UserDefaultsManager.shared
     
     var fullName: String {
@@ -32,8 +31,7 @@ class AboutPresenter: AboutPresenterProtocol {
     
     let profileImageName = "About"
     
-    init(router: AboutRouterProtocol) {
-        self.router = router
+    init() {
     }
     
     func startEditingProfile() {

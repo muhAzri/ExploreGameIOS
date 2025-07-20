@@ -1,7 +1,7 @@
 import Foundation
 import Combine
 
-protocol GameDetailPresenterProtocol: ObservableObject {
+protocol GameDetailViewModelProtocol: ObservableObject {
     var gameDetail: GameDetail? { get }
     var isLoading: Bool { get }
     var errorMessage: String? { get }
@@ -10,18 +10,16 @@ protocol GameDetailPresenterProtocol: ObservableObject {
     func clearError()
 }
 
-class GameDetailPresenter: GameDetailPresenterProtocol {
+class GameDetailViewModel: GameDetailViewModelProtocol {
     @Published var gameDetail: GameDetail?
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     
-    private let interactor: GameDetailInteractorProtocol
-    private let router: GameDetailRouterProtocol
+    private let gameDetailService: GameDetailServiceProtocol
     private var cancellables = Set<AnyCancellable>()
     
-    init(interactor: GameDetailInteractorProtocol, router: GameDetailRouterProtocol) {
-        self.interactor = interactor
-        self.router = router
+    init(gameDetailService: GameDetailServiceProtocol = GameDetailService()) {
+        self.gameDetailService = gameDetailService
     }
     
     deinit {
@@ -31,7 +29,7 @@ class GameDetailPresenter: GameDetailPresenterProtocol {
         isLoading = true
         errorMessage = nil
         
-        interactor.fetchGameDetail(id: id)
+        gameDetailService.fetchGameDetail(id: id)
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] completion in

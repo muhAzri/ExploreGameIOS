@@ -8,17 +8,18 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var coordinator = AppCoordinator()
     @StateObject private var favoritesCounter = FavoritesCounter()
-    @State private var selectedGame: Game?
     @State private var selectedTab = 0
+    @StateObject private var gameListViewModel = GameListViewModel()
+    @StateObject private var favoritesViewModel = FavoritesViewModel()
     
     var body: some View {
         TabView(selection: $selectedTab) {
             // Games Tab
             NavigationStack {
-                coordinator.createGameListView()
-                    .navigationDestination(item: $selectedGame) { game in
+                GameListView()
+                    .environmentObject(gameListViewModel)
+                    .navigationDestination(item: $gameListViewModel.selectedGame) { game in
                         GameDetailView(game: game)
                     }
             }
@@ -30,8 +31,9 @@ struct ContentView: View {
             
             // Favorites Tab
             NavigationStack {
-                coordinator.createFavoritesView()
-                    .navigationDestination(item: $selectedGame) { game in
+                FavoritesView()
+                    .environmentObject(favoritesViewModel)
+                    .navigationDestination(item: $favoritesViewModel.selectedGame) { game in
                         GameDetailView(game: game)
                     }
             }
@@ -44,7 +46,7 @@ struct ContentView: View {
             
             // About Tab
             NavigationStack {
-                coordinator.createAboutView()
+                AboutView()
             }
             .tabItem {
                 Image(systemName: "person.circle.fill")
@@ -52,25 +54,15 @@ struct ContentView: View {
             }
             .tag(2)
         }
-        .onReceive(NotificationCenter.default.publisher(for: .navigateToGameDetail)) { notification in
-            if let game = notification.object as? Game {
-                selectedGame = game
+        .onChange(of: gameListViewModel.shouldNavigateToAbout) { _, shouldNavigate in
+            if shouldNavigate {
+                selectedTab = 2
+                gameListViewModel.shouldNavigateToAbout = false
             }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .navigateToAbout)) { _ in
-            selectedTab = 2
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .navigateToFavorites)) { _ in
-            selectedTab = 1
         }
     }
 }
 
-extension Notification.Name {
-    static let navigateToGameDetail = Notification.Name("navigateToGameDetail")
-    static let navigateToAbout = Notification.Name("navigateToAbout")
-    static let navigateToFavorites = Notification.Name("navigateToFavorites")
-}
 
 #Preview {
     ContentView()

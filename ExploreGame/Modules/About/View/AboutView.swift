@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct AboutView<Presenter: AboutPresenterProtocol>: View {
-    @ObservedObject var presenter: Presenter
+struct AboutView: View {
+    @StateObject private var viewModel = AboutViewModel()
     @State private var editName = ""
     @State private var editEmail = ""
     @State private var editBio = ""
@@ -11,7 +11,7 @@ struct AboutView<Presenter: AboutPresenterProtocol>: View {
             VStack(spacing: 24) {
                 Spacer(minLength: 40)
                 
-                Image(presenter.profileImageName)
+                Image(viewModel.profileImageName)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 120, height: 120)
@@ -19,27 +19,27 @@ struct AboutView<Presenter: AboutPresenterProtocol>: View {
                     .overlay(Circle().stroke(Color.blue, lineWidth: 3))
                 
                 VStack(spacing: 16) {
-                    Text(presenter.fullName)
+                    Text(viewModel.fullName)
                         .font(.title2)
                         .bold()
                         .multilineTextAlignment(.center)
                     
-                    Text(presenter.email)
+                    Text(viewModel.email)
                         .font(.subheadline)
                         .foregroundColor(.blue)
                         .multilineTextAlignment(.center)
                     
-                    Text(presenter.bio)
+                    Text(viewModel.bio)
                         .font(.body)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
                         .foregroundColor(.secondary)
                     
                     Button("Edit Profile") {
-                        editName = presenter.fullName
-                        editEmail = presenter.email
-                        editBio = presenter.bio
-                        presenter.startEditingProfile()
+                        editName = viewModel.fullName
+                        editEmail = viewModel.email
+                        editBio = viewModel.bio
+                        viewModel.startEditingProfile()
                     }
                     .buttonStyle(.borderedProminent)
                 }
@@ -49,18 +49,18 @@ struct AboutView<Presenter: AboutPresenterProtocol>: View {
         }
         .navigationTitle("About")
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: .constant(presenter.isEditingProfile), onDismiss: {
-            presenter.cancelEditing()
+        .sheet(isPresented: .constant(viewModel.isEditingProfile), onDismiss: {
+            viewModel.cancelEditing()
         }) {
             EditProfileView(
                 name: $editName,
                 email: $editEmail,
                 bio: $editBio,
                 onSave: {
-                    presenter.saveProfile(name: editName, email: editEmail, bio: editBio)
+                    viewModel.saveProfile(name: editName, email: editEmail, bio: editBio)
                 },
                 onCancel: {
-                    presenter.cancelEditing()
+                    viewModel.cancelEditing()
                 }
             )
         }

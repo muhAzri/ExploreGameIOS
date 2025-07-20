@@ -1,15 +1,14 @@
 import SwiftUI
 
 struct FavoritesView: View {
-    @StateObject private var presenter = FavoritesPresenter()
-    private let router = FavoritesRouter()
+    @EnvironmentObject var viewModel: FavoritesViewModel
     
     var body: some View {
         Group {
-            if presenter.isLoading {
+            if viewModel.isLoading {
                 ProgressView("Loading favorites...")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if presenter.favorites.isEmpty {
+            } else if viewModel.favorites.isEmpty {
                 VStack(spacing: 16) {
                     Image(systemName: "heart.slash")
                         .font(.system(size: 60))
@@ -44,14 +43,14 @@ struct FavoritesView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List {
-                    ForEach(presenter.favorites, id: \.gameID) { favorite in
+                    ForEach(viewModel.favorites, id: \.gameID) { favorite in
                         FavoriteGameRowView(favorite: favorite) {
                             let coreDataFavorites = CoreDataManager.shared.fetchFavorites()
                             if let favoriteGame = coreDataFavorites.first(where: { Int($0.gameID) == favorite.gameID }) {
-                                router.navigateToGameDetail(game: favoriteGame.toGame())
+                                viewModel.selectGame(favoriteGame.toGame())
                             }
                         } onRemove: {
-                            presenter.removeFromFavorites(favorite.gameID)
+                            viewModel.removeFromFavorites(favorite.gameID)
                         }
                     }
                 }
@@ -59,14 +58,14 @@ struct FavoritesView: View {
         }
         .navigationTitle("Favorites")
         .onAppear {
-            presenter.loadFavorites()
+            viewModel.loadFavorites()
         }
-        .alert("Error", isPresented: .constant(presenter.errorMessage != nil)) {
+        .alert("Error", isPresented: .constant(viewModel.errorMessage != nil)) {
             Button("OK") {
-                presenter.clearError()
+                viewModel.clearError()
             }
         } message: {
-            Text(presenter.errorMessage ?? "")
+            Text(viewModel.errorMessage ?? "")
         }
     }
 }

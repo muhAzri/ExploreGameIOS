@@ -1,12 +1,12 @@
 import Foundation
 import Combine
 
-protocol GameListInteractorProtocol {
+protocol GameListServiceProtocol {
     func fetchGames(page: Int) -> AnyPublisher<GameResponse, NetworkError>
     func searchGames(query: String, page: Int) -> AnyPublisher<GameResponse, NetworkError>
 }
 
-class GameListInteractor: GameListInteractorProtocol {
+class GameListService: GameListServiceProtocol {
     private let networkManager: NetworkManagerProtocol
     
     init(networkManager: NetworkManagerProtocol = NetworkManager.shared) {

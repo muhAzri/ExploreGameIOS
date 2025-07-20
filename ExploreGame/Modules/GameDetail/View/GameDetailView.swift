@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct GameDetailView: View {
-    @StateObject private var presenter = SimpleGameDetailPresenter()
+    @StateObject private var viewModel = GameDetailViewModel()
     @StateObject private var coreDataManager = CoreDataManager.shared
     @Environment(\.dismiss) private var dismiss
     let game: Game
@@ -52,9 +52,9 @@ struct GameDetailView: View {
             
             // Content
             ScrollView {
-                if presenter.isLoading {
+                if viewModel.isLoading {
                     GameDetailShimmerSkeleton()
-                } else if let gameDetail = presenter.gameDetail {
+                } else if let gameDetail = viewModel.gameDetail {
                     GameDetailContent(gameDetail: gameDetail)
                 } else {
                     VStack(alignment: .leading, spacing: 16) {
@@ -69,14 +69,14 @@ struct GameDetailView: View {
         .navigationBarHidden(true)
         .toolbar(.hidden, for: .tabBar)
         .onAppear {
-            presenter.loadGameDetail(id: game.id)
+            viewModel.loadGameDetail(id: game.id)
         }
-        .alert("Error", isPresented: .constant(presenter.errorMessage != nil)) {
+        .alert("Error", isPresented: .constant(viewModel.errorMessage != nil)) {
             Button("OK") {
-                presenter.clearError()
+                viewModel.clearError()
             }
         } message: {
-            Text(presenter.errorMessage ?? "")
+            Text(viewModel.errorMessage ?? "")
         }
     }
 }
